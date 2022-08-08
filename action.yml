@@ -1,0 +1,29 @@
+name: 'Get YAML value'
+author: Rick Meneely <rick@meneely.com>
+branding:
+  icon: crosshair
+  color: purple
+description: Get YAML file values
+inputs:
+  infile:
+    description: The YAML file to be updated
+    default: 'values.yaml'
+    required: false
+  varlist:
+    description: Comma separated list of var=value
+    default: ''
+    required: true
+outputs:
+  values:
+    description: 'Set to comma separated list of found <variable>=<value> values'
+    value: ${{ steps.get-yaml-value.outputs.values }}
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+    - run: 
+        python ${{ github.action_path }}/get-yaml-value.py -i ${{ inputs.infile }} -V "${{ inputs.varlist }}"
+      shell: bash
+      id: get-yaml-value
