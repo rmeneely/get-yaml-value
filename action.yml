@@ -13,6 +13,10 @@ inputs:
     description: Comma separated list of var=value
     default: ''
     required: true
+  exclude_varname:
+    description: Exclude the variable name in the returned values. Note the values returned are in the order they are found.
+    default: false
+    required: false
 outputs:
   values:
     description: 'Returns a comma separated list of found <variable>=<value> values'
@@ -24,6 +28,6 @@ runs:
       with:
         python-version: '3.9'
     - run: 
-        python ${{ github.action_path }}/get-yaml-value.py -i ${{ inputs.infile }} -V "${{ inputs.varlist }}"
+        python ${{ github.action_path }}/get-yaml-value.py -i ${{ inputs.infile }} -V "${{ inputs.varlist }}" -x ${{ inputs.exclude_varname }}
       shell: bash
       id: get-yaml-value

@@ -23,7 +23,7 @@ Condition = {}
 ConditionalContext = {}
 ConditionalValue = {}
 ItemContext = {}
-Updated = False
+ExcludeNames = False
 Debug = False
 
 def enterContext(contextName, indent):
@@ -89,23 +89,24 @@ def processListItem(lines, contexts):
                print("      context is in Condition.keys()")
                print("      condition = {}".format(condition))
             if condition in ItemContext.keys():
-               #print("{}={}".format(context.strip(), rhs.strip()))
                FoundLst.append(context.strip() + '=' + rhs.strip())
-               #lhs = line.split(':')[0]
-               #line = lhs + ': ' + ContextGetValue[context]
-               #if Debug:
-               #   print("      condition is in ItemContext.keys()")
-               #   print("      line = {}".format(line))
-               #if rhs != ContextGetValue[context]:
-               #   Updated = True
     # Reset list item
     ItemContext = {}
     if Debug:
        print("EXIT processListItem()")
 
 
-def writeOutputValues(outputLst):
+def writeOutputValues(outputLst, valuesOnly):
     outputString = ','.join(outputLst)
+    if valuesOnly:
+       valuesLst = []
+       for varvalue in outputLst:
+           lhs = get_lhs(varvalue, '=')
+           rhs = get_rhs(varvalue, '=')
+           valuesLst.append(rhs)
+       outputString = ','.join(valuesLst)
+    else:
+       outputString = ','.join(outputLst)
     print("::set-output name=values::{}".format(outputString))
 
 def main(argv):
@@ -116,7 +117,7 @@ def main(argv):
     global ContextIndent
     global ContextValue
     global ContextGetValue
-    global Updated
+    global ExcludeNames
     global Condition
     global ConditionalContext
     global ConditionalValue
@@ -124,7 +125,6 @@ def main(argv):
     
     # Variables
     Inputfile = 'values.yaml'
-    Updated = False
     inList = False
     itemLines = []		# List item input lines
     itemLineContexts = []  	# List item input lines context
@@ -134,9 +134,9 @@ def main(argv):
     
     # Command line options
     try:
-       opts, args = getopt.getopt(argv, "i:v:V:", ["infile=","var=","vars="])
+       opts, args = getopt.getopt(argv, "i:v:V:x", ["infile=","var=","vars=","exclude-names="])
     except getopt.GetoptError:
-       print('get-yaml-value.py -i <inputfile> [-v <var=value>]')
+       print('get-yaml-value.py -i <inputfile> [-v <var=value>] [-x]')
        sys.exit(2)
     for opt, arg in opts:
         if opt in ('-v', "--var"): 
@@ -170,6 +170,8 @@ def main(argv):
                ContextGetValue[var] = ''
         elif opt in ("-i", "--ifile"):
            Inputfile = arg
+        elif opt in ("-x", "--exclude-names"):
+           ExcludeNames = True
     
     # Read yaml file
     infile = open(Inputfile, "r")
@@ -269,7 +271,7 @@ def main(argv):
        processListItem(itemLines, itemLineContexts)
 
     # Write the output values
-    writeOutputValues(FoundLst)
+    writeOutputValues(FoundLst, ExcludeNames)
 
 if __name__ == "__main__":
    main(sys.argv[1:])

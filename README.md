@@ -13,6 +13,10 @@ This GitHub Action returns a list of YAML file values
         # Default: ''
         # Required
         varlist: ''
+        # exclude_varname - Exclude the variable name in the returned values. Note the values returned are in the order they are found. This is intended for single variable queries.
+        # Default: false
+        # Optional
+        exclude_varname: false
 ```
 
 ## Examples
