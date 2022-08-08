@@ -15,7 +15,7 @@ inputs:
     required: true
 outputs:
   values:
-    description: 'Set to comma separated list of found <variable>=<value> values'
+    description: 'Returns a comma separated list of found <variable>=<value> values'
     value: ${{ steps.get-yaml-value.outputs.values }}
 runs:
   using: "composite"
