@@ -44,7 +44,7 @@ This GitHub Action returns a list of YAML file values
 ```
 
 This will return the `dependencies.version` where that same list item has `dependencies.name` set to 'myapp'.
-Caveat: Does not support multiple <variable>[<condition>].<variable> variables within the same query
+Caveat: Does not support multiple variable[condition].variable variable formats within the same query
 
 
 ## Output
